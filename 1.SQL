@@ -8,7 +8,7 @@ Base table schema-
 ---------------------
 create table stats
 (id int,
- event_name string,
+ event_name varchar(100),
  people_count int
 );
 ----------------------
