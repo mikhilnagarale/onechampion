@@ -1,10 +1,10 @@
-One Championship conducts events in a stadium, each event many people visit it and the stats are saved as these columns: id, event_name, people_count
+--One Championship conducts events in a stadium, each event many people visit it and the stats are saved as these columns: id, event_name, people_count
 
-Take leverage in adding sample data yourself.
-Please write a query to display the records which have 3 or more consecutive events and the amount of people more than 100(inclusive).
+--Take leverage in adding sample data yourself.
+--Please write a query to display the records which have 3 or more consecutive events and the amount of people more than 100(inclusive).
 
 ----------------------
-Base table schema-
+--Base table schema-
 ---------------------
 create table stats
 (id int,
@@ -12,7 +12,7 @@ create table stats
  people_count int
 );
 ----------------------
-sample data-
+--sample data-
 ----------------------
 insert into stats(id,event_name,people_count) values(1 , 'football'  , 50);
 insert into stats(id,event_name,people_count) values(2 , 'football'  , 60);
@@ -21,7 +21,7 @@ insert into stats(id,event_name,people_count) values(3 , 'football'  , 80);
 insert into stats(id,event_name,people_count) values(4 , 'basketball' , 98);
 insert into stats(id,event_name,people_count) values(5 , 'basketball'  , 120);
 ----------------------
-Solution-
+--Solution-
 ----------------------
 with a AS 
 (select id,event_name,people_count,lag(event_name,1) over(order by id asc) as previous_event from stats),
