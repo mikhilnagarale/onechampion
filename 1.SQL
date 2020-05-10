@@ -3,6 +3,7 @@ One Championship conducts events in a stadium, each event many people visit it a
 Take leverage in adding sample data yourself.
 Please write a query to display the records which have 3 or more consecutive events and the amount of people more than 100(inclusive).
 
+----------------------
 Base table schema-
 ---------------------
 create table stats
@@ -13,13 +14,12 @@ create table stats
 ----------------------
 sample data-
 ----------------------
-id, event_name , people_count
-1 , football   , 50
-2 , football   , 60
-3 , football   , 70
-1 , football   , 98
-2 , basketball , 120
-3 , football   , 39
+insert into stats(id,event_name,people_count) values(1 , 'football'  , 50);
+insert into stats(id,event_name,people_count) values(2 , 'football'  , 60);
+insert into stats(id,event_name,people_count) values(3 , 'football'  , 70);
+insert into stats(id,event_name,people_count) values(3 , 'football'  , 80);
+insert into stats(id,event_name,people_count) values(4 , 'basketball' , 98);
+insert into stats(id,event_name,people_count) values(5 , 'basketball'  , 120);
 ----------------------
 Solution-
 ----------------------
@@ -36,3 +36,4 @@ e AS
 select id,event_name
 from e where next_matching_event_rows>=2 and count_of_ppl_next_con_event>=100;
 
+-----------------------
