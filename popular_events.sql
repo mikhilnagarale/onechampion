@@ -6,7 +6,7 @@
 ----------------------
 --Base table schema-
 ---------------------
-create table stats
+create table events
 (id int,
  event_name varchar(100),
  people_count int
@@ -14,26 +14,24 @@ create table stats
 ----------------------
 --sample data-
 ----------------------
-insert into stats(id,event_name,people_count) values(1 , 'football'  , 50);
-insert into stats(id,event_name,people_count) values(2 , 'football'  , 60);
-insert into stats(id,event_name,people_count) values(3 , 'football'  , 70);
-insert into stats(id,event_name,people_count) values(3 , 'football'  , 80);
-insert into stats(id,event_name,people_count) values(4 , 'basketball' , 98);
-insert into stats(id,event_name,people_count) values(5 , 'basketball'  , 120);
+insert into events(id,event_name,people_count) values(1 , 'event_1'  , 10);
+insert into events(id,event_name,people_count) values(2 , 'event_2'  , 109);
+insert into events(id,event_name,people_count) values(3 , 'event_3'  , 150);
+insert into events(id,event_name,people_count) values(4 , 'event_4'  , 99);
+insert into events(id,event_name,people_count) values(5 , 'event_5' , 145);
+insert into events(id,event_name,people_count) values(6 , 'event_6'  , 1455);
+insert into events(id,event_name,people_count) values(7 , 'event_7'  , 199);
 ----------------------
 --Solution-
 ----------------------
-with a AS 
-(select id,event_name,people_count,lag(event_name,1) over(order by id asc) as previous_event from stats),
-b AS 
-(select id,event_name,people_count,case when a.previous_event=event_name then 1 else 0 end as previous_event_flag),
-c AS 
-(select id,event_name,people_count,count(previous_event_flag) over(order by id and range between 1 and 1) as consicative_event_count from b),
-d AS
-(select id,event_name,people_count,lead(consicative_event_count,1) over(order by id) as next_matching_event_rows from c),
-e AS
-(select id,event_name,next_matching_event_rows,sum(people_count) over(order by id rows between current_row and next_matching_event_rows following) count_of_ppl_next_con_event from d)
-select id,event_name
-from e where next_matching_event_rows>=2 and count_of_ppl_next_con_event>=100;
 
+WITH a as 
+(select id,event_name,people_count,case when people_count>=100 then 1 else 0 end as valid_flag from events where case when people_count>=100 then 1 else 0 end=1), 
+b AS(select a.id,a.event_name,a.people_count,b.id as b_id from a left outer  join a as b on b.id = a.id+1 and a.valid_flag=1 and b.valid_flag=1 ),
+c as (select * from b where b_id is null), 
+d as (select id,event_name,people_count,coalesce(lag(id,1) over(order by id asc),0) as previous_step,id-coalesce(lag(id,1) over(order by id asc),0) as diff from c),
+e as (select * from d where diff>=3),
+f as (select e.id,a.id as a_id,a.event_name,a.people_count from e inner JOIN a on a.id>e.previous_step and a.id<=e.id),
+g as (select id,count(*) from f group by id having count(*)>=3)
+select a_id,event_name,people_count from f where f.id in (select id from g);
 -----------------------
